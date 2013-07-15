@@ -1,4 +1,5 @@
 # Django settings for stark project.
+import os.path
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -61,7 +62,8 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/var/www/example.com/static/"
-STATIC_ROOT = ''
+HERE = os.path.dirname(__file__)
+STATIC_ROOT = HERE+'/templates'
 
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
@@ -108,6 +110,7 @@ ROOT_URLCONF = 'stark.urls'
 WSGI_APPLICATION = 'stark.wsgi.application'
 
 TEMPLATE_DIRS = (
+        HERE+'/templates',
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -147,7 +150,11 @@ LOGGING = {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
-        }
+        },
+        'console':{
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
     },
     'loggers': {
         'django.request': {
@@ -155,5 +162,13 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
         },
-    }
+    },
+    'loggers':{
+     'django.db.backends':{
+       'handlers':['console'],
+       'propagate':True,
+       'level':DEBUG 
+      },
+     },
+    
 }
