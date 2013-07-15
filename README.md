@@ -3,7 +3,7 @@
 [stark](/home/jerry/图片/史塔克.jpg)
 =====
 
-The Internet Resource Manager Include the Video Download link,bookmark Application!
+The Internet Resource Manager Include the Video Download link,bookmark Application.
 
 
 ##项目简介
