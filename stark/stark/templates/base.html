@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 {% load staticfiles %}
+{% load i18n %}
+{% load url from future %}
 <html lang="en"><head>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
@@ -41,38 +43,55 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="brand" href="#">Project name</a>
+          <a class="brand" href="#">{% trans "Project name" %}</a>
           <div class="nav-collapse collapse">
             <ul class="nav">
-              <li class="active"><a href="#">Home</a></li>
-              <li><a href="#about">About</a></li>
-              <li><a href="#contact">Contact</a></li>
+              <li class="active"><a href="#">{% trans "Home" %}</a></li>
+              <li><a href="#about">{% trans "About" %}</a></li>
+              <li><a href="#contact">{% trans "Contact" %}</a></li>
               <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">{% trans "Dropdown" %} <b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                  <li><a href="#">Action</a></li>
-                  <li><a href="#">Another action</a></li>
-                  <li><a href="#">Something else here</a></li>
+                  <li><a href="#">{% trans "Action"%}</a></li>
+                  <li><a href="#">{% trans "Another action" %}</a></li>
+                  <li><a href="#">{% trans "Something else here" %} </a></li>
                   <li class="divider"></li>
-                  <li class="nav-header">Nav header</li>
-                  <li><a href="#">Separated link</a></li>
-                  <li><a href="#">One more separated link</a></li>
+                  <li class="nav-header">{% trans "Nav header" %}</li>
+                  <li><a href="#">{% trans "Separated link" %}</a></li>
+                  <li><a href="#">{% trans "One more separated link" %}</a></li>
                 </ul>
               </li>
             </ul>
-            <form class="navbar-form pull-right">
-              <input class="span2" placeholder="Email" type="text">
-              <input class="span2" placeholder="Password" type="password">
-              <button type="submit" class="btn">Sign in</button>
+			
+			{% if user.is_authenticated %}
+			<div  class='pull-right'>
+			<span>
+			<a>{%trans "Logged in as"%}</a>&nbsp;&nbsp;<a href="{% url 'userena_profile_detail' user.username %}"  >{{ user.username }}</a> 
+			</span>
+			<span>
+			<a href="{% url 'userena.views.signout' %}" ><button type=""  class="Logout">{% trans "Log out" %}</button></a>
+			</span>
+			</div>
+			{% else %}
+            <form action="{% url 'account.views.signin' %}" class="navbar-form pull-right" method="post">
+              {% csrf_token %}
+			  <input class="required" id="id_identification" maxlength="75" name="identification" placeholder="Email" type="text">
+              <input class="required" id="id_password" name="password" placeholder="Password" type="password">
+              <button type="submit"  class="Signin">{% trans "Sign in" %}</button>
             </form>
-          </div><!--/.nav-collapse -->
+           {% endif %}
+		  </div><!--/.nav-collapse -->
         </div>
       </div>
     </div>
 
     <div class="container">
 
-        {{  hello }}
+ 
+        {% block content %}{% endblock %}
+
+	</div>
+</body>
       <hr>
 
       <footer>
@@ -89,14 +108,14 @@
     <script src="{% static "js/bootstrap-alert.js" %}"></script>
     <script src="{% static "js/bootstrap-modal.js" %}"></script>
     <script src="{% static "js/bootstrap-dropdown.js" %}"></script>
-    <script src="/static/js/bootstrap-scrollspy.js"></script>
-    <script src="/static/js/bootstrap-tab.js"></script>
-    <script src="/static/js/bootstrap-tooltip.js"></script>
-    <script src="/static/js/bootstrap-popover.js"></script>
-    <script src="/static/js/bootstrap-button.js"></script>
-    <script src="/static/js/bootstrap-collapse.js"></script>
-    <script src="/static/js/bootstrap-carousel.js"></script>
-    <script src="/static/js/bootstrap-typeahead.js"></script>
+    <script src="{% static "js/bootstrap-scrollspy.js" %}"></script>
+    <script src="{% static "js/bootstrap-tab.js" %}"></script>
+    <script src="{% static "js/bootstrap-tooltip.js" %}"></script>
+    <script src="{% static "js/bootstrap-popover.js" %}"></script>
+    <script src="{% static "js/bootstrap-button.js" %}"></script>
+    <script src="{% static "js/bootstrap-collapse.js" %}"></script>
+    <script src="{% static "js/bootstrap-carousel.js" %}"></script>
+    <script src="{% static "js/bootstrap-typeahead.js" %}"></script>
 
   
 

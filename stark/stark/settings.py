@@ -1,5 +1,7 @@
 # Django settings for stark project.
+# -*- coding:utf-8 -*-
 import os.path
+
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -110,8 +112,13 @@ ROOT_URLCONF = 'stark.urls'
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'stark.wsgi.application'
 
+
+import userena 
+from os.path import dirname,abspath
+USER_TEMPLATE = os.path.join(dirname(abspath(userena.__file__)),'templates')
 TEMPLATE_DIRS = (
         HERE+'/templates',
+		USER_TEMPLATE,
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -125,9 +132,9 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # Uncomment the next line to enable the admin:
-    # 'django.contrib.admin',
+    'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
-    # 'django.contrib.admindocs',
+    'django.contrib.admindocs',
     'base',
     'account',
     'bookmark',
@@ -173,3 +180,30 @@ LOGGING = {
      },
     
 }
+
+#================================================
+#accounts setting information for django-userena
+#================================================
+AUTHENTICATION_BACKENDS = (
+    'userena.backends.UserenaAuthenticationBackend',
+    'guardian.backends.ObjectPermissionBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+
+
+LOGIN_REDIRECT_URL = '/'
+#LOGIN_REDIRECT_URL = '/accounts/%(username)s/'
+LOGIN_URL = '/accounts/signin/'
+LOGOUT_URL = '/accounts/signout/'
+EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
+EMAIL_USE_TLS = True
+EMAIL_HOST ='smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'jerryxing98@gmail.com'
+EMAIL_HOST_PASSWORD = '5612259a!@#$5678'
+ANONYMOUS_USER_ID = -1
+AUTH_PROFILE_MODULE = 'account.MyProfile'
+
+
+
