@@ -4,11 +4,9 @@ from django.contrib import admin
 from models import Bookmark
 from models import Tag
 from models import Link
-from models import Test
 from models import FriendShip
 from models import Invitation
-from models import CaptchaStorage
-from models import RegistrationProfile
+
 '''
 class BookmarkAdmin(admin.ModelAdmin):
     pass

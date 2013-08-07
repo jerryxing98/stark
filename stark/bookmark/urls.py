@@ -15,24 +15,29 @@ from django.conf import settings
   6.将标签分享到第三方认证平台
   7.RSS订阅
 '''
+'''
 Feeds={
     'recent':RecentBookmarks,
     'user':UserBookmarks,
     'tag':TagBookmarks
 }
-
+'''
 
 urlpatterns = patterns('bookmark.views',
 	#
 	#
-	url(r'$',BookMarkList.as_view(),name='bookmark_list'),
-	url(r'post/$','bookmarks.views.bookmark_post_page'),
-    url(r'edit/(\d+)/$','bookmarks.views.bookmark_edit_page'),
-    url(r'copy/(\d+)/$','bookmarks.views.bookmark_copy_page'),
-    url(r'delete/$','bookmarks.views.bookmark_delete'),
-	url(r'savecount/(\d+)/$','bookmarks.views.bookmark_savecount_page'),
-	url(r'users/(?P<username>\w+)/$',BookMarkUserList.as_view()),
-    url(r'tag/(?P<tag_id>\w+)/$',BookMarkTagList.as_view()),
-    url(r'bookmark/(?P<bookmark_id>\d+)/$','bookmarks.views.bookmark_comment_page'),
+	url(r'post/$','bookmark_post_page'),
+    url(r'edit/(\d+)/$','bookmark_edit_page'),
+    url(r'copy/(\d+)/$','bookmark_copy_page'),
+    url(r'delete/$','bookmark_delete'),
+	url(r'savecount/(\d+)/$','bookmark_savecount_page'),
+	url(r'users/(?P<username>\w+)/$','bookmark_user_list'),
+    url(r'tag/(?P<tag_id>\d+)/$','tag_page'),
+    url(r'(?P<bookmark_id>\d+)/$','bookmark_comment_page'),
+	url(r'$','bookmark_list'),
 )
 
+urlpatterns += patterns('bookmark.ex_views',
+	url(r'search/$','bookmark_search_page'),
+	url(r'feeds/(?P<url>.*)/rss.xml$','django.contrib.syndication.views.feed',{'feed_dict':feeds}),
+)

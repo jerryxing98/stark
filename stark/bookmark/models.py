@@ -30,103 +30,6 @@ tz = pytz.timezone(settings.TIME_ZONE)
 
 
 
-class CaptchaStorageManager(models.Manager):
-    pass
-
-
-'''
-验证码 对象：由四个部分组成
-1.验证码Hash值
-2.验证问题的文本
-3.验证问题的答案
-4.验证问题的过期时间（一般存储 当前时间+120s）  ---
-'''
-class CaptchaStorage(models.Model):
-    '''
-    用于存取长度为 40 的 随机字符串（验证码对应的哈希值 ）
-    '''
-    hashkey = models.CharField(max_length=40,unique=True)
-    '''
-    用于存取问答式提问的验证码信息，此次是一个算术题
-    '''
-    text = models.CharField(max_length=6)
-    '''
-    问答式提问答案，
-    '''
-    answer = models.IntegerField()
-    '''
-    存取验证吗过期时间
-    '''
-    valid_unit = models.DateTimeField(default=datetime.datetime.now()+datetime.timedelta(minutes = settings.CAPTCHA_TIMEOUT))
-	objects=CaptchaStorageManager()
-    '''
-    重载父类 Model中的 save方法
-    '''
-    def save(self):
-        #print 'test!!'
-        '''
-        随机生成标准化的 unicode字符串 ，保存在key中
-        '''
-        key = unicodedata.normalize('NFKD',str(random.randrange(0,settings.MAX_RANDOM_KEY))+str(time.time())+unicode(self.text))
-        #print 'key:',key
-        '''
-        根据Key变量的值建立个sha1安全哈希对象，接着调用该对象的 hexdigest 方法返回 key变量值的 十六进制哈希值，
-        '''
-        self.hashkey = hashlib.sha1(key).hexdigest()
-        del key
-        '''
-        调用父类的Model中的save方法
-        '''
-        super(CaptchaStorage,self).save()
-
-    @staticmethod
-    def remove_expired():
-        CaptchaStorage.objects.filter(valid_unit__lt=datetime.datetime.now()).delete()
-
-    '''
-    验证答案是否正确
-    1.验证码是否过期
-    2.验证码是否存在
-    3.验证答案是否正确
-    验证完成后随即删除验证码
-    '''
-    @staticmethod
-    def validate(request_hashkey,given_answer):
-        try:
-            #取出与request_hashkey对应的数据模型
-            result= CaptchaStorage.objects.get(hashkey=request_hashkey)
-        except CaptchaStorage.DoesNotExist:
-            return False
-        time_now=datetime.datetime.now(tz=tz)
-        if result.valid_unit < time_now:
-            #删除request_hashkey对应的数据模型
-            result.delete()
-            return False
-        if str(result.answer)!=str(given_answer):
-            result.delete()
-            return False
-        result.delete()
-        return True
-
-    '''
-    自产生验证码模型对象
-    '''
-    @staticmethod
-    def generate_captcha(text,answer):
-        captcha=CaptchaStorage(text=text,answer=answer)
-        #print 'captcha:',captcha,自产生HashLib的值
-        captcha.save()
-        #print 'captcha:'+captcha.hashkey
-        return captcha
-
-    class Admin:
-        pass
-
-    class Meta:
-        '''  '''
-        verbose_name_plural = '验证码信息'
-
-
 
 
 
@@ -171,7 +74,7 @@ class TagManager(models.Manager):
     def user_tag_count(self,username):
         cursor = connection.cursor()
         sql='select d.id,d.name,d.c from ( select t.id,t.name,count(*) c from book'+\
-                       'marks_bookmark b,bookmarks_tag t,bookmarks_book'+\
+                       'mark_bookmark b,bookmark_tag t,bookmark_book'+\
                         'mark_tag bt,auth_user u where b.id=bt.bookmark_id and '+\
                         'b.user_id=u.id and t.id=bt.tag_id and u.username ="'+\
                         username+'" group by t.id order by t.name ) d order by d.c desc '
@@ -184,46 +87,46 @@ class TagManager(models.Manager):
             t.count = row[2]
             result_list.append(t)
         return result_list
-	
-	def _get_tag_cloud(username=''):
-		MAX_WEIGHT = 5
-		MAX_LEN=15
-		if username:
-			#取出该用户的标签总数
-			tags = self.user_tag_count(username)
-		else:
-			#取出所有标签,按名字进行排序
-			tags = self.order_by('name')
-		'''
-		检查tags 是否存在被 没有bookmark引用的标签 ，
-		如果存在
-			删除 （删除数据库记录）
-		'''
-		for tag in tags:
-			if tag.bookmark_set.count()==0:
-				tag.delete()
-		tags = Tag.objects.order_by('name')
+    
+    def _get_tag_cloud(self,username=''):
+        MAX_WEIGHT = 5
+        MAX_LEN=15
+        if username:
+            #取出该用户的标签总数
+            tags = self.user_tag_count(username)
+        else:
+            #取出所有标签,按名字进行排序
+            tags = self.order_by('name')
+        '''
+        检查tags 是否存在被 没有bookmark引用的标签 ，
+        如果存在
+            删除 （删除数据库记录）
+        '''
+        for tag in tags:
+            if tag.bookmark_set.count()==0:
+                tag.delete()
+        tags = Tag.objects.order_by('name')
 
-		for tag in tags:
-			tag.count=tag.bookmark_set.count()
+        for tag in tags:
+            tag.count=tag.bookmark_set.count()
 
-		try:
-			min_count=max_count=tags[0].count
-		except IndexError:
-			min_count=max_count=0
+        try:
+            min_count=max_count=tags[0].count
+        except IndexError:
+            min_count=max_count=0
 
-		for tag in tags:
-			if tag.count>max_count:
-				max_count=tag.count
-			if tag.count<min_count:
-				min_count=tag.count
-		#得到tag被应用次数的间距
-		range = float(max_count-min_count)
-		if range ==0.0:
-			range=1.0
-		for tag in tags:
-			tag.weight = int(MAX_WEIGHT*(tag.count-min_count)/range)
-		return tags[:15]
+        for tag in tags:
+            if tag.count>max_count:
+                max_count=tag.count
+            if tag.count<min_count:
+                min_count=tag.count
+        #得到tag被应用次数的间距
+        range = float(max_count-min_count)
+        if range ==0.0:
+            range=1.0
+        for tag in tags:
+            tag.weight = int(MAX_WEIGHT*(tag.count-min_count)/range)
+        return tags[:15]
 
 '''
  1.tag 名称
@@ -261,8 +164,8 @@ class BookmarkManager(models.Manager):
     '''
     def get_first_bookmark_ids_for_link(self):
         sql=' select b.id ' \
-            ' from bookmarks_bookmark b,(select link_id,min(date) md ' \
-            ' from bookmarks_bookmark' \
+            ' from bookmark_bookmark b,(select link_id,min(date) md ' \
+            ' from bookmark_bookmark' \
             ' where shared=1 group by link_id) bb ' \
             ' where b.link_id = bb.link_id and date=bb.md';
         #print sql
@@ -512,12 +415,12 @@ class RegistrationProfile(models.Model):
 
     objects = RegistrationManger()
 
-    '''
-    返回激活码过期时间
-    1.小问题，从user 模型中取出的时间，是具有时区的
-    2. 在datetime 模块中时间属性分为两种 一种有时区，一种没有时区，两者不能做运算，需要转换
-    3. 三目运算符:  1 if x<5 else 0  ,X<5 and 1 or 0
-    '''
+ '''
+    #返回激活码过期时间
+    #1.小问题，从user 模型中取出的时间，是具有时区的
+    #2. 在datetime 模块中时间属性分为两种 一种有时区，一种没有时区，两者不能做运算，需要转换
+    #3. 三目运算符:  1 if x<5 else 0  ,X<5 and 1 or 0
+'''
     def activation_key_expired(self):
         activation_date=datetime.timedelta(days=settings.ACCOUT_ACTIVATION_DAYS)
         return self.user.date_joined+activation_date <= datetime.datetime.now(tz=tz)

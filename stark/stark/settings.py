@@ -113,9 +113,10 @@ ROOT_URLCONF = 'stark.urls'
 WSGI_APPLICATION = 'stark.wsgi.application'
 
 
-import userena 
+import userena,bookmark 
 from os.path import dirname,abspath
 USER_TEMPLATE = os.path.join(dirname(abspath(userena.__file__)),'templates')
+BOOKMARK_TEMPLATE = os.path.join(dirname(abspath(bookmark.__file__)),'templates')
 TEMPLATE_DIRS = (
         HERE+'/templates',
 		USER_TEMPLATE,
@@ -135,6 +136,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     'django.contrib.admindocs',
+	'django.contrib.comments',
     'base',
     'account',
     'bookmark',
