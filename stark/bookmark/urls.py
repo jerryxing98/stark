@@ -2,8 +2,8 @@
 
 from django.conf.urls import patterns, include, url
 from django.conf import settings
-
-
+from bookmark.feeds import *
+from django.contrib.syndication.views import Feed
 
 '''
   标签管理
@@ -15,17 +15,19 @@ from django.conf import settings
   6.将标签分享到第三方认证平台
   7.RSS订阅
 '''
-'''
-Feeds={
+
+feeds={
     'recent':RecentBookmarks,
     'user':UserBookmarks,
     'tag':TagBookmarks
 }
-'''
 
-urlpatterns = patterns('bookmark.ex_views',
-	url(r'search/$','bookmark_search_page'),
-	#url(r'feeds/(?P<url>.*)/rss.xml$','django.contrib.syndication.views.feed',{'feed_dict':feeds}),
+
+urlpatterns = patterns('',
+	url(r'search/$','bookmark.ex_views.bookmark_search_page'),
+	url(r'feeds/recent/rss.xml$',RecentBookmarks()),
+	url(r'feeds/tag/(?P<id>\d+)/rss.xml$',TagBookmarks()),
+	url(r'feeds/user/(?P<id>\d+)/rss.xml$',UserBookmarks(),)
 )
 
 

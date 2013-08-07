@@ -112,6 +112,7 @@ ROOT_URLCONF = 'stark.urls'
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'stark.wsgi.application'
 
+SITE_HOST = '127.0.0.1:8000'
 
 import userena,bookmark 
 from os.path import dirname,abspath
@@ -132,6 +133,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+	'django.contrib.syndication',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
@@ -140,6 +142,7 @@ INSTALLED_APPS = (
     'base',
     'account',
     'bookmark',
+	'friend',
 )
 
 # A sample logging configuration. The only tangible logging
