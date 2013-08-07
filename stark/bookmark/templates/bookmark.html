@@ -1,0 +1,58 @@
+{% load custom_tags_filters %}
+{% load comments %}
+<a href="{{ bookmark.link.url }}">{{ bookmark.title }}</a>
+&nbsp;&nbsp;
+
+{% ifequal user bookmark.user %}
+
+   <a href=" {% url "bookmark.views.bookmark_edit_page" bookmark.id %}" id="edit">[编辑]</a>
+    &nbsp;&nbsp;
+    <a href="{% url "bookmark.views.bookmark_delete" %}?bookmark_id={{ bookmark.id }}&next={{ request.get_full_path }}" onclick="return delBookmarkComfirm()" id="edit">[删除]</a>
+{% else %}
+    <a href="{% url "bookmark.views.bookmark_copy_page" bookmark.id %}"  id="edit">[收藏]</a>
+{% endifequal %}
+
+{% if bookmark.get_avg_rating1 %}
+    &nbsp;&nbsp;&nbsp;
+    <b>
+        <i>{{ bookmark.get_avg_rating1 }}分</i>
+    </b>
+
+
+{% endif %}
+
+    <br>
+        <b>描述:</b>
+        {% if bookmark.description %}
+            {{ bookmark.description|truncatehz:"64"}}
+        {% else %}
+            无
+        {% endif %}
+    </br>
+        <b>标签:</b>
+        <!-- if the tag is exist -->
+        {% if bookmark.tag.all %}
+            {% for tag in bookmark.tag.all %}
+                <a href="{% url 'bookmark.views.tag_page' tag.id %}?username={{ bookmark.user.username }}">{{ tag.name }}</a>
+
+            {% endfor  %}
+        {% else %}
+            无
+        {% endif %}
+        {% if show_user %}
+        <b>来自:</b>
+            <a href="{{ bookmark.user.get_absolue_url }}">{{ bookmark.user.username }}</a>&nbsp;&nbsp;
+        {% endif %}
+
+        {{ bookmark.date|date:"Y-m-d"}}&nbsp;&nbsp;
+
+        {% if bookmark.shared %}
+		{% get_save_count bookmark.link.id as save_count %}
+			<a href="{% url "bookmark.views.bookmark_savecount_page" bookmark.link.id %}?bookmark_title={{ bookmark.title|urlencode}}">{{ save_count }}人收藏</a>
+            &nbsp;&nbsp;
+           
+        {% get_comment_count for bookmark.bookmark bookmark.id as comment_count %}
+            <a href="{% url "bookmark.views.bookmark_comment_page" bookmark.link.id %}">{{ comment_count }}条评论</a>
+        {% else %}
+            <i>私有标签</i><img src="/site_media/lock.gif" alt="私有标签"/>
+        {% endif %}

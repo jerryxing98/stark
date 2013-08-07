@@ -1,0 +1,26 @@
+<!--main_page coding -->
+<!-- if the shared_bookmark is not null,show the list! -->
+
+{% if bookmark_list %}
+    <!-- show the single record in the List -->
+    {% for bookmark in bookmark_list %}
+        <div id="div_bookmark">
+            <!-- throw the bookmark link access to the single url page -->
+            <!--
+            <a href="{{bookmark.link.url}}">
+
+                <img id="preview_img" src="http://enimages.websnapr.com/?size=t&url={{ bookmark.link.url}}" alt="bookmark.title" width="140" height="100"/>
+            </a>
+            -->
+            <!-- show the bookmark page -->
+            {% include "bookmark.html" %}
+        </div>
+    {% endfor %}
+    <!-- page navigator -->
+    {% include "paginator.html" %}
+{% else %}
+    <p>没有共享书签！</p>
+{% endif %}
+
+<!-- show the tag_cloud -->
+{% include "tag_cloud.html" %}

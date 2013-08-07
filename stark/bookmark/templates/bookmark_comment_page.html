@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load comments %}
+{% block title %}书签:{{ bookmark.title }}{% endblock %}
+{% block head %}书签:{{ bookmark.title }}{% endblock %}
+{% block content %}
+	{% include "bookmark.html" %}
+	<h2>用户评论</h2>
+	{% get_comment_list for bookmark.bookmark bookmark.id as comment_list %}
+	{% if not comment_list%}
+		<p><b>崭无评论！~</b></p>
+	{% endif %}
+
+	{% for comment in comment_list %}
+		<div id = 'div_comment' >
+			<p><b><a href='{{comment.user.get_absolute_url}}'>{{comment.user.username }}</a></b>&nbsp;&nbsp;&nbsp;
+			发表于{{comment.submit_date|date:'y-m-d h:i:s' }}&nbsp;&nbsp;&nbsp;{{comment.ip_address}}
+				{% if comment.rating1 %}
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b><i>{{comment.rating1|floatformat:'1' }}分</i></b>
+
+				{% endif %}
+				{{ comment.comment|escape|urlizetrunc:40|linebreaks}}
+			</p>
+	{% endfor %}
+		</div>
+{% endblock %}
+{% include 'tag_cloud.html' %}
