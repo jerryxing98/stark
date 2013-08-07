@@ -8,6 +8,24 @@ from bookmark.widgets import *
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import AuthenticationForm
 
+class BookmarkSearchForm(forms.Form):
+	CHOICES = (
+	('bookmark','书签'),
+	('tag','标签'),
+	('user','user'),
+	)
+
+	search_type = forms.ChoiceField(
+		label = '类型',
+		choices = CHOICES
+	)
+	query = forms.CharField(
+		label = '请输入搜索内容',
+		widget = forms.TextInput(attrs = {'size':32 }),
+		required = True
+	)
+
+
 class BookmarkPostForm(forms.Form):
     url=forms.URLField(
         label='网址',

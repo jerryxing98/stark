@@ -23,7 +23,13 @@ Feeds={
 }
 '''
 
-urlpatterns = patterns('bookmark.views',
+urlpatterns = patterns('bookmark.ex_views',
+	url(r'search/$','bookmark_search_page'),
+	#url(r'feeds/(?P<url>.*)/rss.xml$','django.contrib.syndication.views.feed',{'feed_dict':feeds}),
+)
+
+
+urlpatterns += patterns('bookmark.views',
 	#
 	#
 	url(r'post/$','bookmark_post_page'),
@@ -37,7 +43,3 @@ urlpatterns = patterns('bookmark.views',
 	url(r'$','bookmark_list'),
 )
 
-urlpatterns += patterns('bookmark.ex_views',
-	url(r'search/$','bookmark_search_page'),
-	url(r'feeds/(?P<url>.*)/rss.xml$','django.contrib.syndication.views.feed',{'feed_dict':feeds}),
-)
