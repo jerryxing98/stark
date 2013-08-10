@@ -1,0 +1,103 @@
+#-*- coding:utf-8 -*-
+
+from django.db import models
+from django.core.mail import send_mail
+''' 导入用户模块 '''
+from django.contrib.auth.models import User
+from django.template import Context
+''' 导入用于发送邮件的类 '''
+from django.core.mail import send_mail
+''' 导入用户模块 '''
+from django.contrib.auth.models import User
+''' 用户建立模板对象的方法 '''
+from django.template.loader import get_template
+''' 评论 '''
+from django.contrib.comments.models import Comment
+
+from django.contrib.contenttypes.models import ContentType
+'''
+好友关注关系
+1.from_user:外键
+2.to_user:外键
+'''
+class FriendShip(models.Model):
+    from_friend = models.ForeignKey(
+        User,related_name='friend_set'
+        )
+
+
+    to_friend = models.ForeignKey(
+        User,related_name='to_friend_set'
+        )
+    def __str__(self):
+        return  '%s,%s' % (
+            self.from_friend.username,
+            self.to_friend.username
+        )
+
+    '''
+    class Admin:
+        pass
+    '''
+
+    class Meta:
+        unique_together=(('from_friend','to_friend'),)
+        verbose_name_plural='用户好友信息'
+
+
+'''
+邀请
+邀请人姓名:
+被邀请姓名:
+邮件地址:
+邀请文本:
+'''
+class Invitation(models.Model):
+    name = models.CharField(
+        max_length=16,
+        help_text='长度在1-16个中英文字符之间'
+    )
+
+    email = models.EmailField(
+
+    )
+
+    code = models.CharField(
+        max_length=20,
+        help_text='长度必须在1-20个中英文字符之间'
+    )
+
+    sender = models.ForeignKey(User)
+
+    def __str__(self):
+        return '%s,%s' % (self.sender.username,self.email)
+
+
+    '''
+    class Admin:
+        pass
+    '''
+
+    class Meta:
+        verbose_name_plural = '邀请信息'
+
+    '''
+    发送邀请的相关关系
+    '''
+    def send(self):
+        subject = '邀请你加入Wuxing书签系统'
+        link = 'http://%s/friend/accept/%s/' (
+            settings.SITE_HOST,
+            self.code
+        )
+        template = get_template('invitation_email.html')
+        context = Context({
+            'name':self.name,
+            'link':link,
+            'sender':self.sender.username
+        })
+
+        message = template.render(context)
+
+        send_mail(subject,message,
+                  settings.DEFAULT_FROM_EMAIL,[self.email])

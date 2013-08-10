@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}书签:{{ bookmark_title }}{% endblock %}
+{% block head %}书签:{{ blockmark_title }}{{% endblock %}}
+{% block content %}
+	<font size='5'></font><a href='{{ link.url }}'>{{ bookmark_title }}</a></font>
+	<br>
+	<font size = '4'><a href="{{ link.url }}">{{ link.url }}</a></font>
+	<h2>同链接的共享书签</h2>
+	{% include 'bookmark_list.html' %}
+{% endblock %}

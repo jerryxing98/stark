@@ -1,4 +1,7 @@
 # Django settings for stark project.
+# -*- coding:utf-8 -*-
+import os.path
+
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -49,18 +52,19 @@ USE_L10N = True
 USE_TZ = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
-# Example: "/var/www/example.com/media/"
-MEDIA_ROOT = ''
+# Example: "/var/www/example.com/media/" 
+MEDIA_ROOT = '/P_Project/stark/media/'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://example.com/media/", "http://media.example.com/"
-MEDIA_URL = ''
+MEDIA_URL = '/media/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/var/www/example.com/static/"
+HERE = os.path.dirname(__file__)
 STATIC_ROOT = ''
 
 # URL prefix for static files.
@@ -69,6 +73,8 @@ STATIC_URL = '/static/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
+    os.path.join(HERE, "static"),
+	
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -92,6 +98,7 @@ TEMPLATE_LOADERS = (
 #     'django.template.loaders.eggs.Loader',
 )
 
+
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -107,7 +114,15 @@ ROOT_URLCONF = 'stark.urls'
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'stark.wsgi.application'
 
+SITE_HOST = '127.0.0.1:8000'
+
+import userena,bookmark 
+from os.path import dirname,abspath
+USER_TEMPLATE = os.path.join(dirname(abspath(userena.__file__)),'templates')
+BOOKMARK_TEMPLATE = os.path.join(dirname(abspath(bookmark.__file__)),'templates')
 TEMPLATE_DIRS = (
+        HERE+'/templates',
+		USER_TEMPLATE,
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -120,13 +135,19 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+	'django.contrib.syndication',
     # Uncomment the next line to enable the admin:
-    # 'django.contrib.admin',
+    'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
-    # 'django.contrib.admindocs',
+    'django.contrib.admindocs',
+	'django.contrib.comments',
     'base',
+	'userena',
+	'guardian',
+	'easy_thumbnails',
     'account',
     'bookmark',
+	'friend',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -147,7 +168,11 @@ LOGGING = {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
-        }
+        },
+        'console':{
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
     },
     'loggers': {
         'django.request': {
@@ -155,5 +180,40 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
         },
-    }
+    },
+    'loggers':{
+     'django.db.backends':{
+       'handlers':['console'],
+       'propagate':True,
+       'level':DEBUG 
+      },
+     },
+    
 }
+
+#================================================
+#accounts setting information for django-userena
+#================================================
+AUTHENTICATION_BACKENDS = (
+    'userena.backends.UserenaAuthenticationBackend',
+    'guardian.backends.ObjectPermissionBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+
+
+LOGIN_REDIRECT_URL = '/'
+#LOGIN_REDIRECT_URL = '/accounts/%(username)s/'
+LOGIN_URL = '/accounts/signin/'
+LOGOUT_URL = '/accounts/signout/'
+EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
+EMAIL_USE_TLS = True
+EMAIL_HOST ='smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'jerryxing98@gmail.com'
+EMAIL_HOST_PASSWORD = '5612259a!@#$5678'
+ANONYMOUS_USER_ID = -1
+AUTH_PROFILE_MODULE = 'account.MyProfile'
+USERENA_MUGSHOT_PATH = 'mugshots/'
+
+

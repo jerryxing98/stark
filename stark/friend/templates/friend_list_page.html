@@ -1,0 +1,67 @@
+{% extends  'base.html' %}
+{% block title %}
+	{% if is_me %}
+		我的好友
+	{% else %}
+		{{ ex_username }}的好友
+	{% endif %}
+{% endblock%}
+{% block head %}
+	{% if is_me %}
+		我的好友
+	{% else %}
+		{{ ex_username }}的好友
+	{% endif %}
+{% endblock%}
+
+{% block content %}
+<div class="tabbable"> <!-- Only required for left/right tabs -->
+		{% if is_me %}
+		<div id="ajax-tab-container" data-easytabs = "true">
+		<ul class="nav nav-tabs">
+			<li class="active"><a href="{% url 'friend_list_page' 'fans' user.username %}" data-toggle="tab">我的粉丝</a></li>
+			<li><a href="{% url 'friend_list_page' 'follows' user.username %}" data-toggle="tab">我的关注</a></li>
+		</ul>
+		<div class="tab-content">
+			<div class="tab-pane active" id="tab1">
+			</div>
+		</div>
+		</div>
+		{% else %}
+		<div id="ajax-tab-container" data-easytabs = "true">
+		<ul class="nav nav-tabs">
+			<li class="active"><a href="{% url 'friend_list_page' 'fans' ex_username  %}" data-target="#tabs-ajax-fans">{{ ex_username }}的粉丝</a></li>
+			<li><a href="{% url 'friend_list_page' 'follows' ex_username %}" data-target="#tabs-ajax-follows">{{ ex_username }}的关注</a></li>
+			<li><a href="{% url 'friend_list_page' 'same_follows' ex_username %}" data-target="#tabs-ajax-same-follows">共同关注</a></li>
+			<li><a href="{% url 'friend_list_page' 'second_follows' ex_username %}" data-target="tabs-ajax-second-follows">我关注的人{{ ex_username }}也关注</a></li>
+		</ul>
+			<script type="text/javascript">
+			$('#')
+			</script>
+		<div class="tab-content" id="tabs-1">
+			<div class="tab-pane" >	
+			</div>
+		</div>
+		</div>
+		<script type="text/javascript">
+		{% block on_ready %}
+		$(function() {
+				$( "#ajax-tab-container" ).tabs({
+					beforeLoad: function( event, ui ) {
+					ui.jqXHR.error(function() {
+					ui.panel.html(
+						"Couldn't load this tab. We'll try to fix this as soon as possible. " +
+						"If this wouldn't be a demo." );
+						});
+					}
+				});
+		});
+		{% endblock %}
+		</script>	
+		{% endif %}
+</div>
+{% endblock %}
+
+
+
+

@@ -1,0 +1,8 @@
+<div id="div_tagcloud">
+    {% for tag in tags %}
+        <a href="{% url 'bookmark.views.tag_page' tag.id %}?username={{ username }}" id="tag-cloud-{{ tag.weight }}">
+        {{ tag.name }}
+        </a>
+
+    {% endfor %}
+</div>

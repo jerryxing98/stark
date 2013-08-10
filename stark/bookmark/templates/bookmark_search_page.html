@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %} 搜索书签 {% endblock %}
+{% block head %} 搜索书签 {% endblock %}
+{% block content %}
+<form method = 'get' action='.'>
+	{{form.as_p}}
+	<input type='submit' value= '搜索'>
+</form>
+{% if show_results %}
+	<b>搜索结果</b>
+	{% include 'bookmark_list.html' %}
+{% endif %}
+{% endblock %}
