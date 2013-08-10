@@ -1,0 +1,12 @@
+{% if friend_list %}
+    <ul id="ul_friend">
+        {% for friend in friend_list %}
+            <li id="li_friend">{% include "friend_item.html" %}</li>
+        {% endfor %}
+    </ul>
+    {% include "paginator.html" %}
+{% else %}
+    <p>没有好友！</p>
+{% endif %}
+
+

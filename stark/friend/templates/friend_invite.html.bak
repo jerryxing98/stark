@@ -1,0 +1,9 @@
+{% extend 'base.html' %}
+{% block title %}邀请你感兴趣的人{% endblock %}
+{% block head %}邀请你感兴趣的人{% endblock %}
+{% block content %}
+	{% include 'friend_invite_form.html' %}
+{% endblock %}
+
+
+

@@ -1,0 +1,28 @@
+
+    <div class="">
+      <div class="pic">
+		{% if friend.user.get_profile.get_mugshot_url %}
+        <img src="{{ friend.user.get_profile.get_mugshot_url }}"/>
+		{% else %}
+		<img src="/media/mugshots/2517b868fd.jpg">
+		{% endif %}
+      </div>
+      <div class="info">
+        <h3> <a href="{% url 'bookmark_user_list' friend.user.username %}">{{friend.user.username}}</a> </h3>
+        <div class="extinfo">
+          <span>关注: <a href="{% url 'friend_list_page' 'fans' friend.user.username %}/temp/">{{friend.info.fans_count}}</a></span>
+          <span>粉丝: <a href="{% url 'friend_list_page' 'follows' friend.user.username %}/temp/">{{friend.info.follows_count}}</a></span>
+          <span>Tag: <a href="{% url 'bookmark_user_list'  friend.user.username %}">{{friend.info.tag_count}}</a></span>
+          <span>Bookmark: <a href="{% url 'bookmark_user_list' friend.user.username %}">{{ friend.info.bookmark_count }}</a></span>
+		  <span>
+			{% if friend.info.is_follows and friend.info.is_fans  %}
+				<a href = '#'>互相关注<a>
+			{% elif friend.info.is_fans %}
+				已关注
+			{% endif %}
+		  </span>
+          <span></span>
+        </div>
+        
+      </div>
+    </div>
