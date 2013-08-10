@@ -49,5 +49,15 @@ urlpatterns += patterns('',
 #the friend model
 #====================================
 urlpatterns += patterns('',
-		url(r'^bookmark/',include('bookmark.urls')),
+		url(r'^friend/',include('friend.urls')),
 		)
+
+
+if settings.DEBUG:
+    urlpatterns += patterns('',
+        url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {
+            'document_root': settings.MEDIA_ROOT,
+        }),
+   )
+else:
+    print "no server is configured to serve media files. Do it now."

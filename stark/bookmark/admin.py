@@ -4,8 +4,8 @@ from django.contrib import admin
 from models import Bookmark
 from models import Tag
 from models import Link
-from models import FriendShip
-from models import Invitation
+#from models import FriendShip
+#from models import Invitation
 
 '''
 class BookmarkAdmin(admin.ModelAdmin):
@@ -29,8 +29,8 @@ class LinkAdmin(admin.ModelAdmin):
 admin.site.register(Tag)
 admin.site.register(Link)
 admin.site.register(Bookmark)
-admin.site.register(Invitation)
-admin.site.register(FriendShip)
+#admin.site.register(Invitation)
+#admin.site.register(FriendShip)
 #admin.site.register(CaptchaStorage)
 #admin.site.register(RegistrationProfile)
 

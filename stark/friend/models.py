@@ -1,3 +1,5 @@
+#-*- coding:utf-8 -*-
+
 from django.db import models
 from django.core.mail import send_mail
 ''' 导入用户模块 '''
@@ -12,7 +14,7 @@ from django.template.loader import get_template
 ''' 评论 '''
 from django.contrib.comments.models import Comment
 
-from django.contrib.contenttypes.models import ContentTyp
+from django.contrib.contenttypes.models import ContentType
 '''
 好友关注关系
 1.from_user:外键
@@ -41,7 +43,6 @@ class FriendShip(models.Model):
     class Meta:
         unique_together=(('from_friend','to_friend'),)
         verbose_name_plural='用户好友信息'
-
 
 
 '''

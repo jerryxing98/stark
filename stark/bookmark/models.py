@@ -67,6 +67,14 @@ class Link(models.Model):
     2.
 '''
 class TagManager(models.Manager):
+    #每个用户所拥有tag的个数
+    def user_tag_counts(self,username):
+        cursor = connection.cursor()
+        sql = 'select distinct b.tag_id from bookmark_bookmark_tag b inner join  (select id from bookmark_bookmark where user_id = %d) a on b.id = a.id' % int(User.objects.get(username = username).id)
+        cursor.execute(sql)
+        num = len(cursor.fetchall())
+        return num
+
     '''
     定义一个管理者方法user_tag_count,该方法以列表形式返回与特定用户(由参数username指定)相关的每一个标签对象的引用
     次数
@@ -158,6 +166,9 @@ class Tag(models.Model):
 
 
 class BookmarkManager(models.Manager):
+    #每个用户所拥有的书签的个数
+    def get_user_bookmark_count(self,username):
+        return self.filter(user = User.objects.get(username = username)).count()
     '''
     1.有性能问题，需要解决
     2.按照链接，进行分组，取出最早加入的链接。组成的书签。

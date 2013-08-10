@@ -2,6 +2,7 @@
 from bookmark.models import	*
 from django.template import	RequestContext
 from bookmark.forms	import *
+from friend.models import *
 from django.http import	HttpResponseRedirect
 from django.http import	HttpResponseForbidden
 from django.shortcuts import render_to_response
@@ -276,7 +277,7 @@ def	bookmark_savecount_page(request,link_id):
 
 
 
-
+'''
 class BookMarkUserList(ListView):
 	model =	Bookmark
 	template_name ='user_page.html'
@@ -311,12 +312,10 @@ class BookMarkUserList(ListView):
 		ctx=self.get_context_data(object_list=self.object_list)
 		ctx.update(temp_args)
 		return self.render_to_response(ctx)
-		'''
-		def	get_context_data(self, **kwargs):
-			ctx=super(BookMarkUserList,self).get_context_data(self,**kwargs)
-			return ctx
-		'''
+
 bookmark_user_list = BookMarkUserList.as_view()
+'''
+
 
 
 def tag_page(request,tag_id):
@@ -360,6 +359,7 @@ def tag_page(request,tag_id):
 3.分页显示
 4.列出所有的好友关系
 '''
+'''
 def	user_page(request,username):
 	user = get_object_or_404(User,username=username)
 	tags = Tag.objects._get_tag_cloud(username)
@@ -391,6 +391,41 @@ def	user_page(request,username):
 	#BookMarkUserList.temp_dict=temp_args
 	#return	BookMarkUserList(username=username,is_Friend=is_friend,is_CurUser=is_CurUser,tags=tags).as_view()
 	return BookMarkUserList.as_view()
+'''
+def bookmark_user_list(request,username):
+	user = get_object_or_404(User,username=username)
+	tags = Tag.objects._get_tag_cloud(username)
+	is_friend=True
+	try:
+		#主要检查该用户是不是当前用户的好友
+		FriendShip.objects.get(
+			from_friend__username=request.user.username,
+			to_friend=user
+		)
+	except ObjectDoesNotExist:
+		is_friend =	False
+	if request.user	== user:
+		is_friend =	True
+		bookmarks =	user.bookmark_set.order_by('-date')
+		page_title = u'你的书签（共%s 个书签）'	% bookmarks.count()
+		#是否显示 RSS订阅
+		show_rss = False
+	else:
+		bookmarks =	user.bookmark_set.filter(shared=True).order_by('-date')
+		page_title =u'%s的共享书签（共%s 个书签）' %(username,bookmarks.count())
+		show_rss = True
+	return render_to_response(template_name = 'user_page.html',
+							  context_instance = RequestContext(request
+							  ,{
+							  'username':username,
+							  'tags':tags,
+							  'is_friend':is_friend,
+							  'page_title':page_title,
+							  'show_rss':show_rss,
+							  'show_user':False
+							  }
+							  ))
+
 
 
 def	bookmark_comment_page(request,bookmark_id):

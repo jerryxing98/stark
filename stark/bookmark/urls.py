@@ -34,14 +34,14 @@ urlpatterns = patterns('',
 urlpatterns += patterns('bookmark.views',
 	#
 	#
-	url(r'post/$','bookmark_post_page'),
-    url(r'edit/(\d+)/$','bookmark_edit_page'),
-    url(r'copy/(\d+)/$','bookmark_copy_page'),
-    url(r'delete/$','bookmark_delete'),
-	url(r'savecount/(\d+)/$','bookmark_savecount_page'),
-	url(r'users/(?P<username>\w+)/$','bookmark_user_list'),
-    url(r'tag/(?P<tag_id>\d+)/$','tag_page'),
-    url(r'(?P<bookmark_id>\d+)/$','bookmark_comment_page'),
+	url(r'post/$','bookmark_post_page',name='bookmark_post_page'),
+    url(r'edit/(\d+)/$','bookmark_edit_page',name = 'bookmark_edit_page'),
+    url(r'copy/(\d+)/$','bookmark_copy_page' , name = 'bookmark_copy_page'),
+    url(r'delete/$','bookmark_delete',name = 'bookmark_delete'),
+	url(r'savecount/(\d+)/$','bookmark_savecount_page', name = 'bookmark_savecount_page'),
+	url(r'users/(?P<username>\w+)/$','bookmark_user_list',name = 'bookmark_user_list'),
+    url(r'tag/(?P<tag_id>\d+)/$','tag_page',name = 'tag_page'),
+    url(r'(?P<bookmark_id>\d+)/$','bookmark_comment_page' , name = 'bookmark_comment_page'),
 	url(r'$','bookmark_list'),
 )
 
